@@ -8,7 +8,7 @@
     <projectUrl>https://github.com/mdalepiane/DrHouse</projectUrl>
     <licenseUrl>https://raw.githubusercontent.com/mdalepiane/DrHouse/master/LICENSE</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <title>DrHouse</title>
+    <title>DrHouse - SQL Server Checker</title>
     <summary>A .NET library to help implementing application health checks.</summary>
     <description>Provides ready to use code to perform connection and permission checks on SQL Server database.</description>
     <releaseNotes></releaseNotes>
