@@ -89,8 +89,8 @@ namespace DrHouse.SqlServer
                 {
                     HealthData tablePermissionHealth = new HealthData(permission.Permission.ToString());
 
-                    bool hasPermission = CheckPermission(permission);
-                    if(hasPermission == false)
+                    tablePermissionHealth.IsOK = CheckPermission(permission);
+                    if(tablePermissionHealth.IsOK == false)
                     {
                         tablePermissionHealth.ErrorMessage = "Does not have permission.";
                     }
