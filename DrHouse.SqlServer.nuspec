@@ -14,6 +14,9 @@
     <releaseNotes></releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>health-check sql-server database</tags>
+	<dependencies>
+	  <dependency id="DrHouse" version="0.0.1" />
+    </dependencies>
   </metadata>
   <files>
     <file src="artifacts/Release/DrHouse.SqlServer.dll" target="lib\net45" />
