@@ -10,3 +10,5 @@ in order to determine whether the application is healthy or not.
 Current implementation includes the following Health Checkers:
 - [SqlServer](docs/health-checkers/SqlServer.md) - checks the connection with
   SQL Server database and the specified permissions
+- [Telnet](docs/health-checkers/Telnet.md) - checks the connection with a server
+  using Telnet.
