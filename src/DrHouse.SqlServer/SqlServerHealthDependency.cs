@@ -3,23 +3,21 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DrHouse.SqlServer
 {
     public class SqlServerHealthDependency : IHealthDependency
     {
+        private readonly string _connectionStringName;
         private readonly string _connectionString;
         private readonly IDictionary<string, ICollection<TablePermission>> _permissions;
-        private readonly string _dbName;
 
-        public SqlServerHealthDependency(string nameOrConnectionString)
+        public SqlServerHealthDependency(string connectionStringName)
         {
-            _connectionString = (ConfigurationManager.ConnectionStrings[nameOrConnectionString] != null) ?
-                                ConfigurationManager.ConnectionStrings[nameOrConnectionString].ConnectionString :
-                                nameOrConnectionString;
+            _connectionStringName = connectionStringName;
+            _connectionString = (ConfigurationManager.ConnectionStrings[connectionStringName] != null) ?
+                                ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString :
+                                "";
 
             _permissions = new Dictionary<string, ICollection<TablePermission>>();
         }
@@ -48,7 +46,7 @@ namespace DrHouse.SqlServer
 
         public HealthData CheckHealth()
         {
-            HealthData sqlHealthData = new HealthData("Unknown");
+            HealthData sqlHealthData = new HealthData(_connectionStringName);
             sqlHealthData.Type = "SqlServer";
 
             try
