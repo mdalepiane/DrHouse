@@ -1,19 +1,19 @@
 <?xml version="1.0"?>
 <package>
   <metadata>
-    <id>DrHouse.SqlServer</id>
-    <version>0.0.3</version>
+    <id>DrHouse.Telnet</id>
+    <version>0.0.1</version>
     <authors>Mateus Dalepiane</authors>
     <owners>Buy4</owners>
     <projectUrl>https://github.com/mdalepiane/DrHouse</projectUrl>
     <licenseUrl>https://raw.githubusercontent.com/mdalepiane/DrHouse/master/LICENSE</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <title>DrHouse - SQL Server Checker</title>
+    <title>DrHouse - Telnet Connection Checker</title>
     <summary>A .NET library to help implementing application health checks.</summary>
-    <description>Provides ready to use code to perform connection and permission checks on SQL Server database.</description>
+    <description>Provides ready to use code to perform connection check using telnet.</description>
     <releaseNotes></releaseNotes>
     <copyright>Copyright 2016</copyright>
-    <tags>health-check sql-server database</tags>
+    <tags>health-check connection telnet</tags>
 	<dependencies>
 	  <dependency id="DrHouse" version="0.0.1" />
     </dependencies>
