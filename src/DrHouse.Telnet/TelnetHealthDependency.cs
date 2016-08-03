@@ -40,13 +40,15 @@ namespace DrHouse.Telnet
             try
             {
                 CancellationToken token = new CancellationToken();
-                Client telnetClient = new Client(_hostname, _port, token);
-
-                if (telnetClient.IsConnected)
+                using (Client telnetClient = new Client(_hostname, _port, token))
                 {
-                    healthData.IsOK = true;
+                    if (telnetClient.IsConnected)
+                    {
+                        healthData.IsOK = true;
+                    }
                 }
-            } catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 healthData.IsOK = false;
                 healthData.ErrorMessage = ex.Message;
