@@ -11,24 +11,15 @@ namespace DrHouse.SqlServer
 {
     public class SqlServerHealthDependency : IHealthDependency
     {
-        private readonly SqlConnection _sqlConnection;
+        private readonly string _connectionString;
         private readonly IDictionary<string, ICollection<TablePermission>> _permissions;
         private readonly string _dbName;
 
         public SqlServerHealthDependency(string nameOrConnectionString)
         {
-            string connectionString = (ConfigurationManager.ConnectionStrings[nameOrConnectionString] != null) ?
+            _connectionString = (ConfigurationManager.ConnectionStrings[nameOrConnectionString] != null) ?
                                 ConfigurationManager.ConnectionStrings[nameOrConnectionString].ConnectionString :
                                 nameOrConnectionString;
-
-            _sqlConnection = new SqlConnection(connectionString);
-
-            if (_sqlConnection.State != System.Data.ConnectionState.Open)
-            {
-                _sqlConnection.Open();
-            }
-
-            _dbName = _sqlConnection.Database;
 
             _permissions = new Dictionary<string, ICollection<TablePermission>>();
         }
@@ -57,29 +48,41 @@ namespace DrHouse.SqlServer
 
         public HealthData CheckHealth()
         {
-            HealthData sqlHealthData = new HealthData(_dbName);
+            HealthData sqlHealthData = new HealthData("Unknown");
             sqlHealthData.Type = "SqlServer";
 
             try
             {
-                foreach (string tableName in _permissions.Keys)
+                using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
                 {
-                    HealthData tableHealth = CheckTablePermissions(tableName, _permissions[tableName]);
-                    sqlHealthData.DependenciesStatus.Add(tableHealth);
-                }
 
-                sqlHealthData.IsOK = true;
+                    if (sqlConnection.State != System.Data.ConnectionState.Open)
+                    {
+                        sqlConnection.Open();
+                    }
+
+                    sqlHealthData = new HealthData(sqlConnection.Database);
+                    sqlHealthData.Type = "SqlServer";
+
+                    foreach (string tableName in _permissions.Keys)
+                    {
+                        HealthData tableHealth = CheckTablePermissions(tableName, _permissions[tableName], sqlConnection);
+                        sqlHealthData.DependenciesStatus.Add(tableHealth);
+                    }
+
+                    sqlHealthData.IsOK = true;
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                sqlHealthData.ErrorMessage = ex.Message;
                 sqlHealthData.IsOK = false;
+                sqlHealthData.ErrorMessage = ex.Message;
             }
 
             return sqlHealthData;
         }
 
-        private HealthData CheckTablePermissions(string tableName, ICollection<TablePermission> permissions)
+        private HealthData CheckTablePermissions(string tableName, ICollection<TablePermission> permissions, SqlConnection sqlConnection)
         {
             HealthData tableHealth = new HealthData(tableName);
 
@@ -89,7 +92,7 @@ namespace DrHouse.SqlServer
                 {
                     HealthData tablePermissionHealth = new HealthData(permission.Permission.ToString());
 
-                    tablePermissionHealth.IsOK = CheckPermission(permission);
+                    tablePermissionHealth.IsOK = CheckPermission(permission, sqlConnection);
                     if(tablePermissionHealth.IsOK == false)
                     {
                         tablePermissionHealth.ErrorMessage = "Does not have permission.";
@@ -109,14 +112,14 @@ namespace DrHouse.SqlServer
             return tableHealth;
         }
 
-        private bool CheckPermission(TablePermission permission)
+        private bool CheckPermission(TablePermission permission, SqlConnection sqlConnection)
         {
             string query = @"SELECT HAS_PERMS_BY_NAME (@tableName, 'OBJECT', @permission)";
             var permissionCmd = new SqlCommand(query);
             permissionCmd.Parameters.Add(new SqlParameter() { ParameterName = "@tableName", Value = permission.TableName });
             permissionCmd.Parameters.Add(new SqlParameter() { ParameterName = "@permission", Value = permission.Permission.ToString() });
 
-            permissionCmd.Connection = _sqlConnection;
+            permissionCmd.Connection = sqlConnection;
 
             var reader = permissionCmd.ExecuteReader();
             reader.Read();
