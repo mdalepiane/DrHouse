@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>DrHouse.Telnet</id>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <authors>Mateus Dalepiane</authors>
     <owners>Buy4</owners>
     <projectUrl>https://github.com/mdalepiane/DrHouse</projectUrl>
@@ -19,6 +19,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="artifacts/Release/DrHouse.SqlServer.dll" target="lib\net45" />
+    <file src="artifacts/Release/DrHouse.Telnet.dll" target="lib\net45" />
   </files>
 </package>
