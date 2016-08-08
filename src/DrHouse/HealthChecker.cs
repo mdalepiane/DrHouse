@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,16 +29,22 @@ namespace DrHouse.Core
 
             try
             {
+                ConcurrentBag<HealthData> healthDataCollection = new ConcurrentBag<HealthData>();
+
                 _healthDependencyCollection.AsParallel().ForAll(dep =>
                 {
-                    healthData.DependenciesStatus.Add(dep.CheckHealth());
+                    healthDataCollection.Add(dep.CheckHealth());
                 });
+
+                healthData.DependenciesStatus.AddRange(healthDataCollection);
                 healthData.IsOK = true;
             }
             catch (Exception ex)
             {
                 healthData.IsOK = false;
+                healthData.ErrorMessage = "HealthChecker crashed.";
             }
+
             return healthData;
         }
     }
