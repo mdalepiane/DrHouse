@@ -14,6 +14,10 @@
     <releaseNotes></releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>health-check</tags>
+	<dependencies>
+	  <dependency id="Common.Logging" version="3.3.1" />
+	  <dependency id="Common.Logging.Core" version="3.3.1" />
+	</dependencies>
   </metadata>
   <files>
     <file src="artifacts/Release/DrHouse.dll" target="lib\net45" />
