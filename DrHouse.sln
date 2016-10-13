@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrHouse", "src\DrHouse\DrHouse.csproj", "{D9AE59F5-F2E9-4F7D-BD59-E847EF4346A7}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{F51246C9-569D-475A-9120-3B130A40DFF1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrHouse.Telnet", "src\DrHouse.Telnet\DrHouse.Telnet.csproj", "{C1793447-4A87-4281-96DF-62C2B921A200}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrHouseDirectory", "DrHouseDirectory\DrHouseDirectory.csproj", "{F887BF84-FBAB-4FC6-87EF-B04080B18252}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +39,10 @@ Global
 		{C1793447-4A87-4281-96DF-62C2B921A200}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1793447-4A87-4281-96DF-62C2B921A200}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1793447-4A87-4281-96DF-62C2B921A200}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F887BF84-FBAB-4FC6-87EF-B04080B18252}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F887BF84-FBAB-4FC6-87EF-B04080B18252}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F887BF84-FBAB-4FC6-87EF-B04080B18252}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F887BF84-FBAB-4FC6-87EF-B04080B18252}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -45,5 +51,6 @@ Global
 		{69444AF7-0369-444D-94C6-3E3261E29CAE} = {F51246C9-569D-475A-9120-3B130A40DFF1}
 		{0616E941-EC03-486E-A521-C3CD5B41248D} = {0D4BAE24-25A5-4347-852B-C06DA362FB7A}
 		{C1793447-4A87-4281-96DF-62C2B921A200} = {0D4BAE24-25A5-4347-852B-C06DA362FB7A}
+		{F887BF84-FBAB-4FC6-87EF-B04080B18252} = {0D4BAE24-25A5-4347-852B-C06DA362FB7A}
 	EndGlobalSection
 EndGlobal
