@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{F51246C9-5
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrHouse.Telnet", "src\DrHouse.Telnet\DrHouse.Telnet.csproj", "{C1793447-4A87-4281-96DF-62C2B921A200}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrHouseDirectory", "DrHouseDirectory\DrHouseDirectory.csproj", "{F887BF84-FBAB-4FC6-87EF-B04080B18252}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrHouse.Directory", "src\DrHouse.Directory\DrHouse.Directory.csproj", "{F887BF84-FBAB-4FC6-87EF-B04080B18252}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

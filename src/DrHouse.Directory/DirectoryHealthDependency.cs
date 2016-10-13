@@ -2,13 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DrHouseDirectory
+namespace DrHouse.Directory
 {
     /// <summary>
     /// Directory Health Dependency uses the current windows user to check the user's permissions on a directory
