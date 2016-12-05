@@ -10,5 +10,6 @@ namespace DrHouse.SqlServer
         INSERT = 2,
         DELETE = 4,
         UPDATE = 8,
+        ALTER = 16,
     }
 }
