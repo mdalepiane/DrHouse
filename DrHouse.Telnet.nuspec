@@ -15,7 +15,7 @@
     <copyright>Copyright 2016</copyright>
     <tags>health-check connection telnet</tags>
 	<dependencies>
-	  <dependency id="DrHouse" version="0.0.5" />
+	  <dependency id="DrHouse" version="0.0.6" />
 	  <dependency id="Telnet" version="0.6.1" />
 	  <dependency id="LiteGuard" version="0.10.0" />
     </dependencies>

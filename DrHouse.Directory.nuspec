@@ -15,7 +15,7 @@
     <copyright>Copyright 2016</copyright>
     <tags>health-check windows folder directory permission</tags>
 	<dependencies>
-	  <dependency id="DrHouse" version="0.0.5" />
+	  <dependency id="DrHouse" version="0.0.6" />
     </dependencies>
   </metadata>
   <files>
