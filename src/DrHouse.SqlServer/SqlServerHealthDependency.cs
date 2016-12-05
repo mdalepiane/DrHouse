@@ -165,6 +165,11 @@ namespace DrHouse.SqlServer
                     result = (int)reader[0] > 0;
                 }
 
+                if (tableHealth.IsOK == false)
+                {
+                    tableHealth.ErrorMessage = $"Index '{index.IndexName}' not found for table '{index.TableName}'.";
+                }
+
                 tableHealth.IsOK = result;
             }
             catch (Exception ex)
