@@ -19,6 +19,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="artifacts/Release/DrHouse.SqlServer.dll" target="lib\net45" />
+    <file src="artifacts/Release45/DrHouse.SqlServer.dll" target="lib\net45" />
+    <file src="artifacts/Release452/DrHouse.SqlServer.dll" target="lib\net452" />
   </files>
 </package>

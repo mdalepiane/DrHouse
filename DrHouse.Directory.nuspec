@@ -19,6 +19,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="artifacts/Release/DrHouse.Directory.dll" target="lib\net45" />
+    <file src="artifacts/Release45/DrHouse.Directory.dll" target="lib\net45" />
+    <file src="artifacts/Release452/DrHouse.Directory.dll" target="lib\net452" />
   </files>
 </package>
