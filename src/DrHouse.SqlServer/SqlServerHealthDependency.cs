@@ -11,6 +11,7 @@ namespace DrHouse.SqlServer
         private readonly string _connectionStringName;
         private readonly string _connectionString;
         private readonly IDictionary<string, ICollection<TablePermission>> _permissions;
+        private readonly ICollection<Index> _indexes;
 
         public SqlServerHealthDependency(string connectionStringName)
         {
@@ -20,6 +21,7 @@ namespace DrHouse.SqlServer
                                 "";
 
             _permissions = new Dictionary<string, ICollection<TablePermission>>();
+            _indexes = new List<Index>();
         }
 
         public void AddTableDependency(string tableName, Permission permissionSet)
@@ -44,6 +46,11 @@ namespace DrHouse.SqlServer
             }
         }
 
+        public void AddIndexDependency(string tableName, string indexName)
+        {
+            _indexes.Add(new Index { TableName = tableName, IndexName = indexName });
+        }
+
         public HealthData CheckHealth()
         {
             HealthData sqlHealthData = new HealthData(_connectionStringName);
@@ -66,6 +73,12 @@ namespace DrHouse.SqlServer
                     {
                         HealthData tableHealth = CheckTablePermissions(tableName, _permissions[tableName], sqlConnection);
                         sqlHealthData.DependenciesStatus.Add(tableHealth);
+                    }
+
+                    foreach (Index ix in _indexes)
+                    {
+                        HealthData indexHealth = CheckIndex(ix, sqlConnection);
+                        sqlHealthData.DependenciesStatus.Add(indexHealth);
                     }
 
                     sqlHealthData.IsOK = true;
@@ -126,6 +139,41 @@ namespace DrHouse.SqlServer
             reader.Close();
 
             return result;
+        }
+
+        private HealthData CheckIndex(Index index, SqlConnection sqlConnection)
+        {
+            HealthData tableHealth = new HealthData(index.IndexName);
+
+            string query = @"SELECT COUNT(1) FROM sys.indexes WHERE name = @indexName AND object_id = OBJECT_ID(@tableName)";
+
+
+            try
+            {
+                var permissionCmd = new SqlCommand(query);
+                permissionCmd.Parameters.Add(new SqlParameter() { ParameterName = "@indexName", Value = index.IndexName });
+                permissionCmd.Parameters.Add(new SqlParameter() { ParameterName = "@tableName", Value = index.TableName });
+
+                permissionCmd.Connection = sqlConnection;
+
+                bool result = false;
+                using (var reader = permissionCmd.ExecuteReader())
+                {
+                    reader.Read();
+
+                    // If there is at lease one, return success
+                    result = (int)reader[0] > 0;
+                }
+
+                tableHealth.IsOK = result;
+            }
+            catch (Exception ex)
+            {
+                tableHealth.ErrorMessage = ex.Message;
+                tableHealth.IsOK = false;
+            }
+
+            return tableHealth;
         }
 
         public HealthData CheckHealth(Action check)

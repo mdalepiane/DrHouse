@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Index.cs" />
     <Compile Include="Permission.cs" />
     <Compile Include="SqlServerHealthDependency.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
