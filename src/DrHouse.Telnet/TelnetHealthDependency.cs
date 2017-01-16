@@ -1,7 +1,6 @@
 ﻿using DrHouse.Core;
 using System;
-using PrimS.Telnet;
-using System.Threading;
+using System.Net.Sockets;
 
 namespace DrHouse.Telnet
 {
@@ -35,10 +34,11 @@ namespace DrHouse.Telnet
 
             try
             {
-                CancellationToken token = new CancellationToken();
-                using (Client telnetClient = new Client(_hostname, _port, token))
+                using (Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp))
                 {
-                    if (telnetClient.IsConnected)
+                    socket.Connect(_hostname, _port);
+
+                    if (socket.Connected)
                     {
                         healthData.IsOK = true;
                     }
