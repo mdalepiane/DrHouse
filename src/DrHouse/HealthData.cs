@@ -16,17 +16,18 @@ namespace DrHouse.Core
             DependenciesStatus = new List<HealthData>();
         }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         public string Name { get; private set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         public string Type { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         public string ErrorMessage { get; set; }
-
-        [DataMember]
+        
         private bool _isOk;
+
+        [DataMember(EmitDefaultValue = false)]
         public bool IsOK
         {
             get
@@ -39,7 +40,7 @@ namespace DrHouse.Core
             }
         }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         public List<HealthData> DependenciesStatus { get; set; }
 
         public bool ShouldSerializeDependenciesStatus()
