@@ -27,7 +27,7 @@ namespace DrHouse.Core
         
         private bool _isOk;
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public bool IsOK
         {
             get
