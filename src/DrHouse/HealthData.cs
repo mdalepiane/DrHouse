@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace DrHouse.Core
 {
+    [DataContract]
     public class HealthData
     {
         public HealthData(string appName)
@@ -14,13 +16,18 @@ namespace DrHouse.Core
             DependenciesStatus = new List<HealthData>();
         }
 
+        [DataMember(EmitDefaultValue = false)]
         public string Name { get; private set; }
 
+        [DataMember(EmitDefaultValue = false)]
         public string Type { get; set; }
 
+        [DataMember(EmitDefaultValue = false)]
         public string ErrorMessage { get; set; }
-
+        
         private bool _isOk;
+
+        [DataMember]
         public bool IsOK
         {
             get
@@ -33,6 +40,7 @@ namespace DrHouse.Core
             }
         }
 
+        [DataMember(EmitDefaultValue = false)]
         public List<HealthData> DependenciesStatus { get; set; }
 
         public bool ShouldSerializeDependenciesStatus()
