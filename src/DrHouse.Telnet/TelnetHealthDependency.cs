@@ -1,6 +1,7 @@
 ﻿using DrHouse.Core;
 using System;
 using System.Net.Sockets;
+using DrHouse.Events;
 
 namespace DrHouse.Telnet
 {
@@ -27,6 +28,8 @@ namespace DrHouse.Telnet
             _serviceName = serviceName;
         }
 
+        public event EventHandler<DependencyExceptionEvent> OnDependencyException;
+
         public HealthData CheckHealth()
         {
             HealthData healthData = new HealthData($"{_hostname}:{_port} [{_serviceName ?? ""}]");
@@ -46,6 +49,8 @@ namespace DrHouse.Telnet
             }
             catch (Exception ex)
             {
+                OnDependencyException?.Invoke(this, new DependencyExceptionEvent(ex));
+
                 healthData.IsOK = false;
                 healthData.ErrorMessage = ex.Message;
             }

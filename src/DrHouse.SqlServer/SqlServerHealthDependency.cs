@@ -1,25 +1,24 @@
 ﻿using DrHouse.Core;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data.SqlClient;
+using DrHouse.Events;
 
 namespace DrHouse.SqlServer
 {
     public class SqlServerHealthDependency : IHealthDependency
     {
-        private readonly string _connectionStringName;
+        private readonly string _databaseName;
         private readonly string _connectionString;
         private readonly IDictionary<string, ICollection<TablePermission>> _permissions;
         private readonly ICollection<Index> _indexes;
 
-        public SqlServerHealthDependency(string connectionStringName)
-        {
-            _connectionStringName = connectionStringName;
-            _connectionString = (ConfigurationManager.ConnectionStrings[connectionStringName] != null) ?
-                                ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString :
-                                "";
+        public event EventHandler<DependencyExceptionEvent> OnDependencyException;
 
+        public SqlServerHealthDependency(string databaseName, string connectionString)
+        {
+            _databaseName = databaseName;
+            _connectionString = connectionString;
             _permissions = new Dictionary<string, ICollection<TablePermission>>();
             _indexes = new List<Index>();
         }
@@ -53,14 +52,13 @@ namespace DrHouse.SqlServer
 
         public HealthData CheckHealth()
         {
-            HealthData sqlHealthData = new HealthData(_connectionStringName);
+            HealthData sqlHealthData = new HealthData(_databaseName);
             sqlHealthData.Type = "SqlServer";
 
             try
             {
                 using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
                 {
-
                     if (sqlConnection.State != System.Data.ConnectionState.Open)
                     {
                         sqlConnection.Open();
@@ -86,6 +84,8 @@ namespace DrHouse.SqlServer
             }
             catch (Exception ex)
             {
+                OnDependencyException?.Invoke(this, new DependencyExceptionEvent(ex));
+
                 sqlHealthData.IsOK = false;
                 sqlHealthData.ErrorMessage = ex.Message;
             }
@@ -116,6 +116,8 @@ namespace DrHouse.SqlServer
             }
             catch (Exception ex)
             {
+                OnDependencyException?.Invoke(this, new DependencyExceptionEvent(ex));
+
                 tableHealth.ErrorMessage = ex.Message;
                 tableHealth.IsOK = false;
             }
@@ -147,7 +149,6 @@ namespace DrHouse.SqlServer
 
             string query = @"SELECT COUNT(1) FROM sys.indexes WHERE name = @indexName AND object_id = OBJECT_ID(@tableName)";
 
-
             try
             {
                 var permissionCmd = new SqlCommand(query);
@@ -174,6 +175,8 @@ namespace DrHouse.SqlServer
             }
             catch (Exception ex)
             {
+                OnDependencyException?.Invoke(this, new DependencyExceptionEvent(ex));
+
                 tableHealth.ErrorMessage = ex.Message;
                 tableHealth.IsOK = false;
             }

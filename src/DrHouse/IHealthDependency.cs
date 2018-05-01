@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DrHouse.Events;
 
 namespace DrHouse.Core
 {
@@ -11,5 +8,7 @@ namespace DrHouse.Core
         HealthData CheckHealth();
 
         HealthData CheckHealth(Action check);
+
+        event EventHandler<DependencyExceptionEvent> OnDependencyException;
     }
 }
