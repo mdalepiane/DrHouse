@@ -17,7 +17,7 @@ namespace DrHouse.Directory
         private WindowsIdentity _currentUser;
         private readonly IDictionary<string, ICollection<FileSystemRights>> _fileSystemRigths;
 
-        public event EventHandler OnDependencyException;
+        public event EventHandler<DependencyExceptionEvent> OnDependencyException;
 
         public DirectoryHealthDependency(WindowsIdentity currentUser)
         {

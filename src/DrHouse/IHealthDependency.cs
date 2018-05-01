@@ -1,4 +1,5 @@
 ﻿using System;
+using DrHouse.Events;
 
 namespace DrHouse.Core
 {
@@ -8,6 +9,6 @@ namespace DrHouse.Core
 
         HealthData CheckHealth(Action check);
 
-        event EventHandler OnDependencyException;
+        event EventHandler<DependencyExceptionEvent> OnDependencyException;
     }
 }

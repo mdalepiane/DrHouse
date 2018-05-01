@@ -28,7 +28,7 @@ namespace DrHouse.Telnet
             _serviceName = serviceName;
         }
 
-        public event EventHandler OnDependencyException;
+        public event EventHandler<DependencyExceptionEvent> OnDependencyException;
 
         public HealthData CheckHealth()
         {

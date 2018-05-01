@@ -11,6 +11,8 @@ namespace DrHouse.Core
         private readonly string _appName;
         private readonly ICollection<IHealthDependency> _healthDependencyCollection;
 
+        public event EventHandler<DependencyExceptionEvent> OnDependencyException;
+
         public HealthChecker(string appName)
         {
             _appName = appName;
@@ -64,7 +66,5 @@ namespace DrHouse.Core
                 throw;
             }
         }
-
-        public event EventHandler OnDependencyException;
     }
 }

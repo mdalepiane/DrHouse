@@ -13,7 +13,7 @@ namespace DrHouse.SqlServer
         private readonly IDictionary<string, ICollection<TablePermission>> _permissions;
         private readonly ICollection<Index> _indexes;
 
-        public event EventHandler OnDependencyException;
+        public event EventHandler<DependencyExceptionEvent> OnDependencyException;
 
         public SqlServerHealthDependency(string databaseName, string connectionString)
         {
