@@ -1,7 +1,6 @@
 ﻿using DrHouse.Core;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data.SqlClient;
 
 namespace DrHouse.SqlServer
@@ -13,12 +12,9 @@ namespace DrHouse.SqlServer
         private readonly IDictionary<string, ICollection<TablePermission>> _permissions;
         private readonly ICollection<Index> _indexes;
 
-        public SqlServerHealthDependency(string connectionStringName)
+        public SqlServerHealthDependency(string connectionString)
         {
-            _connectionStringName = connectionStringName;
-            _connectionString = (ConfigurationManager.ConnectionStrings[connectionStringName] != null) ?
-                                ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString :
-                                "";
+            _connectionString = connectionString;
 
             _permissions = new Dictionary<string, ICollection<TablePermission>>();
             _indexes = new List<Index>();
