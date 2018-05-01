@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFrameworks>net452;net45</TargetFrameworks>
+    <PackageId>DrHouse.Directory</PackageId>
+    <Title>DrHouse - Windows Directory Permission Checker</Title>
+    <Description>Provides ready to use code to perform Windows directory permission checks.</Description>
+    <RepositoryUrl>https://github.com/mdalepiane/DrHouse</RepositoryUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/mdalepiane/DrHouse/master/LICENSE</PackageLicenseUrl>
+    <Authors>Mateus Dalepiane</Authors>
+    <PackageTags>health;check</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

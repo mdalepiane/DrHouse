@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net452;net45</TargetFrameworks>
+    <PackageId>DrHouse.SqlServer</PackageId>
+    <Title>DrHouse - SQL Server Checker</Title>
+    <Description>Provides ready to use code to perform connection and permission checks on SQL Server database.</Description>
+    <RepositoryUrl>https://github.com/mdalepiane/DrHouse</RepositoryUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/mdalepiane/DrHouse/master/LICENSE</PackageLicenseUrl>
+    <Authors>Mateus Dalepiane</Authors>
+    <PackageTags>health;check</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
