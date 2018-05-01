@@ -105,6 +105,10 @@ namespace DrHouse.Directory
             try
             {
                 var di = new DirectoryInfo(directoryPath);
+                if (di.Exists == false)
+                {
+                    throw new DirectoryNotFoundException($"Directory {directoryPath} not found.");
+                }
                 var acl = di.GetAccessControl();
                 var rules = acl.GetAccessRules(true, true, typeof(NTAccount));
 
@@ -130,8 +134,9 @@ namespace DrHouse.Directory
                     }
                 }
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException ex)
             {
+                OnDependencyException?.Invoke(this, new DependencyExceptionEvent(ex));
                 return false;
             }
             return isInRoleWithAccess;
