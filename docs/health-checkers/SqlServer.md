@@ -10,8 +10,9 @@ the expected table permissions.
 // Creates a new Health Checker for application TestApp
 HealthChecker healthChecker = new HealthChecker("TestApp");
 
-// Creates a SQL Server dependency that will use connection string "MyDatabase"
-SqlServerHealthDependency dbDependency = new SqlServerHealthDependency("MyDatabase");
+// Creates a SQL Server dependency called "MyDatabase" and provide the connection string to it
+string myDatabaseConnectionString = ConfigurationManager.ConnectionStrings["MyDatabase"]?.ConnectionString;
+SqlServerHealthDependency dbDependency = new SqlServerHealthDependency("MyDatabase", myDatabaseConnectionString);
 
 // Adds two table dependencies to the database dependency
 dbDependency.AddTableDependency("User", Permission.INSERT | Permission.SELECT | Permission.UPDATE);
