@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using DrHouse.Events;
 
 namespace DrHouse.SqlServer
 {
@@ -12,6 +13,7 @@ namespace DrHouse.SqlServer
         private readonly IDictionary<string, ICollection<TablePermission>> _permissions;
         private readonly ICollection<Index> _indexes;
 
+        public event EventHandler OnDependencyException;
 
         public SqlServerHealthDependency(string databaseName, string connectionString)
         {
@@ -82,6 +84,8 @@ namespace DrHouse.SqlServer
             }
             catch (Exception ex)
             {
+                OnDependencyException?.Invoke(this, new DependencyExceptionEvent(ex));
+
                 sqlHealthData.IsOK = false;
                 sqlHealthData.ErrorMessage = ex.Message;
             }
@@ -112,6 +116,8 @@ namespace DrHouse.SqlServer
             }
             catch (Exception ex)
             {
+                OnDependencyException?.Invoke(this, new DependencyExceptionEvent(ex));
+
                 tableHealth.ErrorMessage = ex.Message;
                 tableHealth.IsOK = false;
             }
@@ -143,7 +149,6 @@ namespace DrHouse.SqlServer
 
             string query = @"SELECT COUNT(1) FROM sys.indexes WHERE name = @indexName AND object_id = OBJECT_ID(@tableName)";
 
-
             try
             {
                 var permissionCmd = new SqlCommand(query);
@@ -170,6 +175,8 @@ namespace DrHouse.SqlServer
             }
             catch (Exception ex)
             {
+                OnDependencyException?.Invoke(this, new DependencyExceptionEvent(ex));
+
                 tableHealth.ErrorMessage = ex.Message;
                 tableHealth.IsOK = false;
             }

@@ -1,4 +1,5 @@
 ﻿using DrHouse.Core;
+using DrHouse.Events;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,13 +17,14 @@ namespace DrHouse.Directory
         private WindowsIdentity _currentUser;
         private readonly IDictionary<string, ICollection<FileSystemRights>> _fileSystemRigths;
 
+        public event EventHandler OnDependencyException;
+
         public DirectoryHealthDependency(WindowsIdentity currentUser)
         {
             _currentUser = currentUser;
             _windowsPrincipal = new WindowsPrincipal(currentUser);
             _fileSystemRigths = new Dictionary<string, ICollection<FileSystemRights>>();
         }
-
 
         public void AddDirectoryDependency(string directoryPath, FileSystemRights[] filseSystemRigthsArray)
         {
@@ -39,11 +41,11 @@ namespace DrHouse.Directory
             }
         }
 
-
         public HealthData CheckHealth()
         {
             HealthData directoryHealthData = new HealthData(_windowsPrincipal.Identity.Name);
             directoryHealthData.Type = "DirectoryPermission";
+
             try
             {
                 foreach (string directoryPath in _fileSystemRigths.Keys)
@@ -56,13 +58,13 @@ namespace DrHouse.Directory
             }
             catch (Exception ex)
             {
+                OnDependencyException?.Invoke(this, new DependencyExceptionEvent(ex));
+
                 directoryHealthData.IsOK = false;
                 directoryHealthData.ErrorMessage = ex.Message;
             }
             return directoryHealthData;
         }
-
-
 
         private HealthData CheckFileRigthPermissions(string directoryPath, ICollection<FileSystemRights> fileSystemRights)
         {
@@ -87,13 +89,14 @@ namespace DrHouse.Directory
             }
             catch (Exception ex)
             {
+                OnDependencyException?.Invoke(this, new DependencyExceptionEvent(ex));
+
                 tableHealth.ErrorMessage = ex.Message;
                 tableHealth.IsOK = false;
             }
 
             return tableHealth;
         }
-
 
         private bool CheckUserPermission(string directoryPath, FileSystemRights accessRights)
         {
