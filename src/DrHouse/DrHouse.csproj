@@ -11,9 +11,4 @@
     <PackageTags>health;check</PackageTags>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Common.Logging" Version="3.4.1" />
-    <PackageReference Include="Common.Logging.Core" Version="3.4.1" />
-  </ItemGroup>
-
 </Project>

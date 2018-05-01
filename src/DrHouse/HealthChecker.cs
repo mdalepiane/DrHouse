@@ -1,17 +1,15 @@
-﻿using Common.Logging;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using DrHouse.Events;
 
 namespace DrHouse.Core
 {
     public class HealthChecker
     {
-        private readonly ILog _logger = LogManager.GetLogger<HealthChecker>();
-
         private readonly string _appName;
-        private ICollection<IHealthDependency> _healthDependencyCollection;
+        private readonly ICollection<IHealthDependency> _healthDependencyCollection;
 
         public HealthChecker(string appName)
         {
@@ -21,15 +19,11 @@ namespace DrHouse.Core
 
         public void AddDependency(IHealthDependency dependency)
         {
-            _logger.Debug($"Adding health dependency to {_appName}.");
             _healthDependencyCollection.Add(dependency);
-            _logger.Debug($"Health dependency added to {_appName}.");
         }
 
         public HealthData CheckHealth()
         {
-            _logger.Debug($"Check health for {_appName} started.");
-
             HealthData healthData = new HealthData(_appName);
 
             try
@@ -38,24 +32,39 @@ namespace DrHouse.Core
 
                 _healthDependencyCollection.AsParallel().ForAll(dep =>
                 {
-                    healthDataCollection.Add(dep.CheckHealth());
+                    healthDataCollection.Add(CheckDependency(dep));
                 });
 
-                _logger.Debug($"Check health completed for {_appName}.");
                 healthData.DependenciesStatus.AddRange(healthDataCollection);
                 healthData.IsOK = true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.Error($"Check health crashed for {_appName}: {ex.Message}", ex);
-
                 healthData.IsOK = false;
                 healthData.ErrorMessage = "HealthChecker crashed.";
             }
 
-            _logger.Info($"Health check for {_appName} finished. Success: {healthData.IsOK}.");
-
             return healthData;
         }
+
+        private HealthData CheckDependency(IHealthDependency dependency)
+        {
+            try
+            {
+                dependency.OnDependencyException += (o, e) =>
+                {
+                    OnDependencyException?.Invoke(this, e);
+                };
+
+                return dependency.CheckHealth();
+            }
+            catch (Exception ex)
+            {
+                OnDependencyException?.Invoke(this, new DependencyExceptionEvent(ex));
+                throw;
+            }
+        }
+
+        public event EventHandler OnDependencyException;
     }
 }
