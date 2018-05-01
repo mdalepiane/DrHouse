@@ -7,15 +7,16 @@ namespace DrHouse.SqlServer
 {
     public class SqlServerHealthDependency : IHealthDependency
     {
-        private readonly string _connectionStringName;
+        private readonly string _databaseName;
         private readonly string _connectionString;
         private readonly IDictionary<string, ICollection<TablePermission>> _permissions;
         private readonly ICollection<Index> _indexes;
 
-        public SqlServerHealthDependency(string connectionString)
-        {
-            _connectionString = connectionString;
 
+        public SqlServerHealthDependency(string databaseName, string connectionString)
+        {
+            _databaseName = databaseName;
+            _connectionString = connectionString;
             _permissions = new Dictionary<string, ICollection<TablePermission>>();
             _indexes = new List<Index>();
         }
@@ -49,14 +50,13 @@ namespace DrHouse.SqlServer
 
         public HealthData CheckHealth()
         {
-            HealthData sqlHealthData = new HealthData(_connectionStringName);
+            HealthData sqlHealthData = new HealthData(_databaseName);
             sqlHealthData.Type = "SqlServer";
 
             try
             {
                 using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
                 {
-
                     if (sqlConnection.State != System.Data.ConnectionState.Open)
                     {
                         sqlConnection.Open();
