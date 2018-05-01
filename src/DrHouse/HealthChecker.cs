@@ -40,8 +40,10 @@ namespace DrHouse.Core
                 healthData.DependenciesStatus.AddRange(healthDataCollection);
                 healthData.IsOK = true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                OnDependencyException?.Invoke(this, new DependencyExceptionEvent(ex));
+
                 healthData.IsOK = false;
                 healthData.ErrorMessage = "HealthChecker crashed.";
             }
