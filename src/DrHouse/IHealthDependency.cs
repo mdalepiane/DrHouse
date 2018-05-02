@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Threading.Tasks;
 using DrHouse.Events;
 
 namespace DrHouse.Core
 {
     public interface IHealthDependency
     {
-        HealthData CheckHealth();
+        Task<HealthData> CheckHealthAsync();
 
         HealthData CheckHealth(Action check);
 

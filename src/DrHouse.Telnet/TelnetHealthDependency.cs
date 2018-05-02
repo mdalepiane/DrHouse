@@ -1,6 +1,8 @@
 ﻿using DrHouse.Core;
 using System;
+using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using DrHouse.Events;
 
 namespace DrHouse.Telnet
@@ -30,7 +32,7 @@ namespace DrHouse.Telnet
 
         public event EventHandler<DependencyExceptionEvent> OnDependencyException;
 
-        public HealthData CheckHealth()
+        public async Task<HealthData> CheckHealthAsync()
         {
             HealthData healthData = new HealthData($"{_hostname}:{_port} [{_serviceName ?? ""}]");
             healthData.Type = "Telnet";
@@ -39,7 +41,8 @@ namespace DrHouse.Telnet
             {
                 using (Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp))
                 {
-                    socket.Connect(_hostname, _port);
+                    await Task.Factory.FromAsync(
+                        socket.BeginConnect, socket.EndConnect, _hostname, _port, null);
 
                     if (socket.Connected)
                     {

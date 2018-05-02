@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 using DrHouse.Events;
 
 namespace DrHouse.SqlServer
@@ -50,7 +51,7 @@ namespace DrHouse.SqlServer
             _indexes.Add(new Index { TableName = tableName, IndexName = indexName });
         }
 
-        public HealthData CheckHealth()
+        public async Task<HealthData> CheckHealthAsync()
         {
             HealthData sqlHealthData = new HealthData(_databaseName);
             sqlHealthData.Type = "SqlServer";
@@ -61,23 +62,26 @@ namespace DrHouse.SqlServer
                 {
                     if (sqlConnection.State != System.Data.ConnectionState.Open)
                     {
-                        sqlConnection.Open();
+                        await sqlConnection.OpenAsync();
                     }
 
                     sqlHealthData = new HealthData(sqlConnection.Database);
                     sqlHealthData.Type = "SqlServer";
 
+                    List<Task<HealthData>> taskList = new List<Task<HealthData>>();
                     foreach (string tableName in _permissions.Keys)
                     {
-                        HealthData tableHealth = CheckTablePermissions(tableName, _permissions[tableName], sqlConnection);
-                        sqlHealthData.DependenciesStatus.Add(tableHealth);
+                        taskList.Add(CheckTablePermissionsAsync(tableName, _permissions[tableName], sqlConnection));
                     }
 
                     foreach (Index ix in _indexes)
                     {
-                        HealthData indexHealth = CheckIndex(ix, sqlConnection);
-                        sqlHealthData.DependenciesStatus.Add(indexHealth);
+                        taskList.Add(CheckIndexAsync(ix, sqlConnection));
                     }
+
+                    HealthData[] taskResults = await Task.WhenAll(taskList);
+
+                    sqlHealthData.DependenciesStatus.AddRange(taskResults);
 
                     sqlHealthData.IsOK = true;
                 }
@@ -93,7 +97,7 @@ namespace DrHouse.SqlServer
             return sqlHealthData;
         }
 
-        private HealthData CheckTablePermissions(string tableName, ICollection<TablePermission> permissions, SqlConnection sqlConnection)
+        private async Task<HealthData> CheckTablePermissionsAsync(string tableName, ICollection<TablePermission> permissions, SqlConnection sqlConnection)
         {
             HealthData tableHealth = new HealthData(tableName);
 
@@ -103,7 +107,7 @@ namespace DrHouse.SqlServer
                 {
                     HealthData tablePermissionHealth = new HealthData(permission.Permission.ToString());
 
-                    tablePermissionHealth.IsOK = CheckPermission(permission, sqlConnection);
+                    tablePermissionHealth.IsOK = await CheckPermissionAsync(permission, sqlConnection);
                     if(tablePermissionHealth.IsOK == false)
                     {
                         tablePermissionHealth.ErrorMessage = "Does not have permission.";
@@ -125,7 +129,7 @@ namespace DrHouse.SqlServer
             return tableHealth;
         }
 
-        private bool CheckPermission(TablePermission permission, SqlConnection sqlConnection)
+        private async Task<bool> CheckPermissionAsync(TablePermission permission, SqlConnection sqlConnection)
         {
             string query = @"SELECT HAS_PERMS_BY_NAME (@tableName, 'OBJECT', @permission)";
             var permissionCmd = new SqlCommand(query);
@@ -134,8 +138,8 @@ namespace DrHouse.SqlServer
 
             permissionCmd.Connection = sqlConnection;
 
-            var reader = permissionCmd.ExecuteReader();
-            reader.Read();
+            SqlDataReader reader = await permissionCmd.ExecuteReaderAsync();
+            await reader.ReadAsync();
 
             bool result = (int)reader[0] == 1;
             reader.Close();
@@ -143,7 +147,7 @@ namespace DrHouse.SqlServer
             return result;
         }
 
-        private HealthData CheckIndex(Index index, SqlConnection sqlConnection)
+        private async Task<HealthData> CheckIndexAsync(Index index, SqlConnection sqlConnection)
         {
             HealthData tableHealth = new HealthData(index.IndexName);
 
@@ -158,9 +162,9 @@ namespace DrHouse.SqlServer
                 permissionCmd.Connection = sqlConnection;
 
                 bool result = false;
-                using (var reader = permissionCmd.ExecuteReader())
+                using (var reader = await permissionCmd.ExecuteReaderAsync())
                 {
-                    reader.Read();
+                    await reader.ReadAsync();
 
                     // If there is at lease one, return success
                     result = (int)reader[0] > 0;
