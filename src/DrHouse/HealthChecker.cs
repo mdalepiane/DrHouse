@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DrHouse.Events;
 
 namespace DrHouse.Core
@@ -26,18 +27,24 @@ namespace DrHouse.Core
 
         public HealthData CheckHealth()
         {
+            return CheckHealthAsync().Result;
+        }
+
+        public async Task<HealthData> CheckHealthAsync()
+        {
             HealthData healthData = new HealthData(_appName);
 
             try
             {
-                ConcurrentBag<HealthData> healthDataCollection = new ConcurrentBag<HealthData>();
-
-                _healthDependencyCollection.AsParallel().ForAll(dep =>
+                List<Task<HealthData>> checkTasks = new List<Task<HealthData>>();
+                foreach (IHealthDependency dependency in _healthDependencyCollection)
                 {
-                    healthDataCollection.Add(CheckDependency(dep));
-                });
+                    checkTasks.Add(CheckDependency(dependency));
+                }
 
-                healthData.DependenciesStatus.AddRange(healthDataCollection);
+                HealthData[] results = await Task.WhenAll(checkTasks.ToList());
+
+                healthData.DependenciesStatus.AddRange(results);
                 healthData.IsOK = true;
             }
             catch (Exception ex)
@@ -51,7 +58,7 @@ namespace DrHouse.Core
             return healthData;
         }
 
-        private HealthData CheckDependency(IHealthDependency dependency)
+        private async Task<HealthData> CheckDependency(IHealthDependency dependency)
         {
             try
             {
@@ -60,7 +67,7 @@ namespace DrHouse.Core
                     OnDependencyException?.Invoke(this, e);
                 };
 
-                return dependency.CheckHealth();
+                return await dependency.CheckHealthAsync();
             }
             catch (Exception ex)
             {

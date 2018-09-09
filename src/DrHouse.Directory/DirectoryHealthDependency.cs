@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using System.Threading.Tasks;
 
 namespace DrHouse.Directory
 {
@@ -41,18 +42,24 @@ namespace DrHouse.Directory
             }
         }
 
-        public HealthData CheckHealth()
+        public async Task<HealthData> CheckHealthAsync()
         {
             HealthData directoryHealthData = new HealthData(_windowsPrincipal.Identity.Name);
             directoryHealthData.Type = "DirectoryPermission";
 
             try
             {
+                List<Task<HealthData>> taskList = new List<Task<HealthData>>();
                 foreach (string directoryPath in _fileSystemRigths.Keys)
                 {
-                    HealthData directoryHealth = CheckFileRigthPermissions(directoryPath, _fileSystemRigths[directoryPath]);
-                    directoryHealthData.DependenciesStatus.Add(directoryHealth);
+                    Task<HealthData> checkTask = new Task<HealthData>(() =>
+                        CheckFileRigthPermissions(directoryPath, _fileSystemRigths[directoryPath]));
+                    checkTask.Start();
+                    taskList.Add(checkTask);
                 }
+
+                HealthData[] taskResults = await Task.WhenAll(taskList);
+                directoryHealthData.DependenciesStatus.AddRange(taskResults);
 
                 directoryHealthData.IsOK = true;
             }
